@@ -1,6 +1,7 @@
 "use client"
 
 import {Editor} from "@/components/Editor";
+import { UndoRedoBar } from "@/components/UndoRedoBar";
 import { useHistory } from "@/hooks/useHistory";
 import Image from "next/image";
 import { useState } from "react";
@@ -13,6 +14,11 @@ export default function Home() {
   const {
     currentText,
     updateCurrentText,
+    canUndo,
+    canRedo,
+    undo,
+    redo,
+    reset,
 
   } = useHistory(INITIAL_TEXT);
 
@@ -41,6 +47,16 @@ export default function Home() {
         <main className="max-w-7xl mx-auto px-6  py-6">
 
           {/* controls */}
+          <div className="mb-6">
+            <UndoRedoBar
+              canUndo={canUndo}
+              canRedo={canRedo}
+              onUndo={undo}
+              onRedo={redo}
+              onReset={reset}
+              disabled={isLoading}
+            />
+          </div>
 
           {/* editor and tone picker */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[600px]">
@@ -53,6 +69,8 @@ export default function Home() {
                   placeholder="Start typing your text here..."
                 />
               </div>
+
+              {/* right side - tone picker */}
 
 
           </div>

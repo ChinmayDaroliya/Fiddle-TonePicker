@@ -1,4 +1,4 @@
 export interface HistoryState {
-    text:String;
+    text:string;
     timestamp: number;
 }

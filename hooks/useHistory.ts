@@ -7,6 +7,11 @@ interface UseHistoryReturn {
     history: HistoryState[];
     currentIndex:number;
     updateCurrentText:(text:string) =>void;
+    canUndo :boolean;
+    canRedo:boolean;
+    undo: () => void;
+    redo: () => void;
+    reset: () => void;
 }
 
 const STORAGE_KEY = 'tone-picker-history';
@@ -55,6 +60,29 @@ export function useHistory(initialText:string = ''):UseHistoryReturn{
         }
     },[history,currentIndex]);
 
+    const undo = useCallback(()=>{
+        if(currentIndex>0){
+            const newIndex = currentIndex - 1;
+            setCurrentIndex(newIndex);
+            setCurrentText(history[newIndex].text);
+        }
+    },[currentIndex,history]);
+
+    const redo = useCallback(()=>{
+        if(currentIndex < history.length - 1){
+            const newIndex = currentIndex + 1;
+            setCurrentIndex(newIndex);
+            setCurrentText(history[newIndex].text);
+        }
+    },[]);
+
+     const reset = useCallback(() => {
+        if (history.length > 0) {
+        setCurrentIndex(0);
+        setCurrentText(history[0].text);
+        }
+    }, [history]);
+
     const updateCurrentText = useCallback((text:string)=>{
         setCurrentText(text);
         // update the current history entry
@@ -73,5 +101,10 @@ export function useHistory(initialText:string = ''):UseHistoryReturn{
          history,
          currentIndex,
          updateCurrentText,
+         canUndo: currentIndex > 0,
+         canRedo: currentIndex < history.length - 1,
+         undo,
+         redo,
+         reset,
     }
 }
