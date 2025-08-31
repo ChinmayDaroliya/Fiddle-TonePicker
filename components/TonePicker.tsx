@@ -25,7 +25,7 @@ export function TonePicker({onToneSelect,disabled=false}:TonePickerProps){
         }
 
         const cellKey = `${cell.formality}-${cell.verbosity}`;
-        const isLoading = loadingCell == cellKey;
+        const isLoading = loadingCell === cellKey;
 
         if(isLoading){
             return `${baseStyle} bg-blue-50 border-blue-300 text-blue-700`;
@@ -57,8 +57,8 @@ export function TonePicker({onToneSelect,disabled=false}:TonePickerProps){
             </div>
 
             <div className="grid grid-cols-3 gap-3 flex-1">
-                {TONE_MATRIX.map((row,rowIndex)=>
-                        row.map((cell ,cellIndex)=>{
+                {TONE_MATRIX.map((row)=>
+                        row.map((cell )=>{
                             const cellKey = `${cell.formality}-${cell.verbosity}`;
                             const isLoading = loadingCell === cellKey;
 

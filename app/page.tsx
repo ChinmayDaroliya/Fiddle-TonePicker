@@ -43,8 +43,9 @@ export default function Home() {
       try{
           const request : ToneRequest = {
             text:currentText,
-            formality: formality as any,
-            verbosity: verbosity as any
+            formality: formality as 'formal' | 'neutral' | 'casual',
+            verbosity: verbosity as 'concise' | 'neutral' | 'elaborate'
+
           }
 
           const response = await fetch('/api/tone',{
