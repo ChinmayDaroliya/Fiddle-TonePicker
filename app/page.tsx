@@ -1,10 +1,13 @@
 "use client"
 
 import {Editor} from "@/components/Editor";
+import { TonePicker } from "@/components/TonePicker";
 import { UndoRedoBar } from "@/components/UndoRedoBar";
 import { useHistory } from "@/hooks/useHistory";
-import Image from "next/image";
 import { useState } from "react";
+import { toast, Toaster } from "sonner";
+import { ToneRequest, ToneResponse } from "@/lib/types";
+
 
 export default function Home() {
 
@@ -19,6 +22,7 @@ export default function Home() {
     undo,
     redo,
     reset,
+    addToHistory
 
   } = useHistory(INITIAL_TEXT);
 
@@ -28,8 +32,63 @@ export default function Home() {
     updateCurrentText(newText);
   }
 
+  const handleToneSelect = async(formality:string,verbosity:string) => {
+      if(!currentText.trim()){
+        toast.error('please enter some text first');
+        return;
+      }
+
+      SetIsLoading(true);
+
+      try{
+          const request : ToneRequest = {
+            text:currentText,
+            formality: formality as any,
+            verbosity: verbosity as any
+          }
+
+          const response = await fetch('/api/tone',{
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(request),
+          });
+
+          if(!response.ok){
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to rewrite text');
+          }
+
+          const data : ToneResponse = await response.json();
+
+          if(!data.rewrittenText){
+            throw new Error('no rewritten text recieved');
+          }
+
+          // add history and update current text
+          addToHistory(data.rewrittenText);
+
+          // show success message
+          toast.success(
+            data.cached ? 'Text rewritten (from cache)' : 'Text rewritten successfully'
+          );
+
+
+      }catch(error){
+          console.error('Error  rewriting text: ',error);
+
+          toast.error(
+            error instanceof Error ? error.message : 'Failed to rewrite text. please try again.'
+          );
+      }finally{
+        SetIsLoading(false);
+      }
+  }
+
   return (
       <div className="min-h-screen bg-gray-100" >
+        <Toaster position="top-right"/>
 
         {/* header */}
         <header className="bg-white border-b border-gray-200 px-6 py-4">
@@ -71,6 +130,12 @@ export default function Home() {
               </div>
 
               {/* right side - tone picker */}
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <TonePicker
+                  onToneSelect={handleToneSelect}
+                  disabled={isLoading}
+                />
+              </div>
 
 
           </div>

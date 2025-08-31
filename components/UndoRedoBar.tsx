@@ -26,10 +26,10 @@ export function UndoRedoBar ({
             if(disabled) return;
 
             if(e.ctrlKey || e.metaKey){
-                if(e.key == 'z' && !e.shiftKey && canUndo){
+                if(e.key === 'z' && !e.shiftKey && canUndo){
                     e.preventDefault();
                     onUndo();
-                }else if((e.key == 'y' || (e.key == 'z' && e.shiftKey)) && canRedo){
+                }else if((e.key === 'y' || (e.key === 'z' && e.shiftKey)) && canRedo){
                     e.preventDefault();
                     onRedo();
                 }

@@ -21,19 +21,19 @@ export function Editor ({value,onChange,placeholder="Start typing your text here
                 placeholder={placeholder}
                 disabled={disabled}
                 className={`
-                        lex-1 p-4 border border-gray-300 rounded-lg resize-none
+                        flex-1 p-4 border border-gray-300 rounded-lg resize-none
                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
                         font-mono text-sm leading-relaxed
                         ${disabled ? 'bg-gray-50 text-gray-500 cursor-not-allowed' : 'bg-white'}
                         transition-colors duration-200
                     `}
                     rows={20}
-            >
-                <div className="">
-                        {value.length} Characters
+            />
+                <div className="mt-2 text-sm text-gray-500">
+                        {value.length} characters
                 </div>
 
-            </textarea>
+            
 
         </div>
     )

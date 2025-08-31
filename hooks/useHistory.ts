@@ -12,6 +12,7 @@ interface UseHistoryReturn {
     undo: () => void;
     redo: () => void;
     reset: () => void;
+    addToHistory:(text:string)=>void;
 }
 
 const STORAGE_KEY = 'tone-picker-history';
@@ -60,6 +61,18 @@ export function useHistory(initialText:string = ''):UseHistoryReturn{
         }
     },[history,currentIndex]);
 
+    const addToHistory = useCallback((text:string)=>{
+        setHistory(prev => {
+            // remove any future history(redo items)
+            const newHistory = prev.slice(0,currentIndex+1);
+            // add new entry
+            newHistory.push({text,timestamp:Date.now()});
+            return newHistory;
+        });
+        setCurrentIndex(prev => prev+1);
+        setCurrentText(text);
+    },[currentIndex]);
+
     const undo = useCallback(()=>{
         if(currentIndex>0){
             const newIndex = currentIndex - 1;
@@ -74,7 +87,7 @@ export function useHistory(initialText:string = ''):UseHistoryReturn{
             setCurrentIndex(newIndex);
             setCurrentText(history[newIndex].text);
         }
-    },[]);
+    },[currentIndex, history]);
 
      const reset = useCallback(() => {
         if (history.length > 0) {
@@ -106,5 +119,6 @@ export function useHistory(initialText:string = ''):UseHistoryReturn{
          undo,
          redo,
          reset,
+         addToHistory
     }
 }
